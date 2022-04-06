@@ -4,8 +4,47 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c26d3efc267b50320b63ef8ee23fbaa2",
+    "content-hash": "90ad62ccc0a7ad02ef62ef37700a84eb",
     "packages": [
+        {
+            "name": "pavelsterba/http-exceptions",
+            "version": "v1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pavelsterba/http-exceptions.git",
+                "reference": "b8f2599bf5b442cfb4378d4761d63a618e120689"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pavelsterba/http-exceptions/zipball/b8f2599bf5b442cfb4378d4761d63a618e120689",
+                "reference": "b8f2599bf5b442cfb4378d4761d63a618e120689",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "HttpException\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Pavel Sterba",
+                    "email": "email@pavelsterba.com"
+                }
+            ],
+            "description": "HTTP status code exceptions for PHP.",
+            "homepage": "https://github.com/pavelsterba/http-exceptions",
+            "keywords": [
+                "exceptions",
+                "http",
+                "php"
+            ],
+            "time": "2015-12-18T12:16:24+00:00"
+        },
         {
             "name": "psr/http-factory",
             "version": "1.0.1",

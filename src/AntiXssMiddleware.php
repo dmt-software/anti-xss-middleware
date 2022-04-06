@@ -17,7 +17,7 @@ class AntiXssMiddleware implements MiddlewareInterface
     protected AntiXSS $antiXss;
     protected array $methods;
 
-    public function __construct(AntiXSS $antiXSS = null, array $methods = ['post', 'put', 'path'])
+    public function __construct(AntiXSS $antiXSS = null, array $methods = ['post', 'put', 'patch'])
     {
         $this->antiXss = $antiXSS ?? new AntiXSS();
         $this->methods = array_map('strtoupper', $methods);
