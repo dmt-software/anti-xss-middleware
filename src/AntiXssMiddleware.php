@@ -44,7 +44,19 @@ class AntiXssMiddleware implements MiddlewareInterface
      */
     protected function xssCheck(ServerRequestInterface $request): void
     {
-        $this->antiXss->xss_clean($request->getParsedBody());
+        $parsedBody = $request->getParsedBody();
+        
+        if (is_null($parsedBody)) {
+            return;
+        }
+
+        if (is_string($parsedBody) || is_array($parsedBody)) {
+            $this->antiXss->xss_clean($parsedBody);
+        }
+
+        if (is_object($parsedBody)) {
+            $this->antiXss->xss_clean(get_object_vars($parsedBody));
+        }
 
         if ($this->antiXss->isXssFound()) {
             throw new BadRequestException();
