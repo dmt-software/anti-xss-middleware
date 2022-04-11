@@ -45,4 +45,21 @@ class AntiXssMiddlewareTest extends TestCase
         $middleware->process($request, $endpoint);
     }
 
+    public function testAntiXssQueryParams()
+    {
+        $this->expectException(BadRequestException::class);
+
+        $request = $this->getMockForAbstractClass(ServerRequestInterface::class);
+        $request->method('getMethod')->willReturn('GET');
+        $request->method('getQueryParams')->willReturn([
+            'xss' => "<script>alert('xss')</script>",
+        ]);
+
+        $endpoint = $this->getMockForAbstractClass(RequestHandlerInterface::class);
+        $endpoint->expects($this->never())->method('handle');
+
+        $middleware = new AntiXssMiddleware();
+
+        $middleware->process($request, $endpoint);
+    }
 }

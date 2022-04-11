@@ -17,7 +17,7 @@ class AntiXssMiddleware implements MiddlewareInterface
     protected AntiXSS $antiXss;
     protected array $methods;
 
-    public function __construct(AntiXSS $antiXSS = null, array $methods = ['post', 'put', 'patch'])
+    public function __construct(AntiXSS $antiXSS = null, array $methods = ['get', 'post', 'put', 'patch'])
     {
         $this->antiXss = $antiXSS ?? new AntiXSS();
         $this->methods = array_map('strtoupper', $methods);
@@ -27,11 +27,13 @@ class AntiXssMiddleware implements MiddlewareInterface
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
+     * @throws BadRequestException
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (in_array(strtoupper($request->getMethod()), $this->methods)) {
-            $this->xssCheck($request);
+            $this->xssCheckQueryParams($request);
+            $this->xssCheckBody($request);
         }
 
         return $handler->handle($request);
@@ -42,7 +44,7 @@ class AntiXssMiddleware implements MiddlewareInterface
      * @return void
      * @throws BadRequestException
      */
-    protected function xssCheck(ServerRequestInterface $request): void
+    protected function xssCheckBody(ServerRequestInterface $request): void
     {
         $parsedBody = $request->getParsedBody();
         
@@ -57,6 +59,26 @@ class AntiXssMiddleware implements MiddlewareInterface
         if (is_object($parsedBody)) {
             $this->antiXss->xss_clean(get_object_vars($parsedBody));
         }
+
+        if ($this->antiXss->isXssFound()) {
+            throw new BadRequestException();
+        }
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return void
+     * @throws BadRequestException
+     */
+    public function xssCheckQueryParams(ServerRequestInterface $request): void
+    {
+        $params = $request->getQueryParams();
+
+        if (!$params) {
+            return;
+        }
+
+        $this->antiXss->xss_clean($params);
 
         if ($this->antiXss->isXssFound()) {
             throw new BadRequestException();
