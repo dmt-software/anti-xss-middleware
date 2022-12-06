@@ -45,7 +45,7 @@ class AntiXssMiddleware implements MiddlewareInterface
     protected function xssCheck(ServerRequestInterface $request): void
     {
         $parsedBody = $request->getParsedBody();
-        
+
         if (is_null($parsedBody)) {
             return;
         }
