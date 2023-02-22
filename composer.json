@@ -1,12 +1,16 @@
 {
   "name": "dmt-software/anti-xss-middleware",
-  "description": "anti-xss middleware",
+  "description": "PSR-15 middleware to help prevent xss attacks",
   "minimum-stability": "stable",
   "license": "MIT",
   "authors": [
     {
       "name": "lingo",
       "email": "lingo@de-mes.nl"
+    },
+    {
+      "name": "Bas de Mes",
+      "email": "bas@dmt-software.nl"
     }
   ],
   "autoload": {
