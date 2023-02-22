@@ -2,7 +2,7 @@
   "name": "dmt-software/anti-xss-middleware",
   "description": "anti-xss middleware",
   "minimum-stability": "stable",
-  "license": "mit",
+  "license": "MIT",
   "authors": [
     {
       "name": "lingo",
@@ -11,20 +11,18 @@
   ],
   "autoload": {
     "psr-4": {
-      "DMT\\Http\\AntiXss\\Middleware\\": "src"
+      "DMT\\Http\\AntiXss\\Middleware\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "DMT\\Http\\AntiXss\\Middleware\\": "test"
+      "DMT\\Test\\Http\\AntiXss\\Middleware\\": "test/"
     }
   },
   "require": {
     "psr/http-server-middleware": "^1.0",
     "psr/http-factory": "^1.0",
     "psr/http-message": "^1.0",
-    "pavelsterba/http-exceptions": "^1.1",
-
     "voku/anti-xss": "^4.1"
   },
   "require-dev": {
