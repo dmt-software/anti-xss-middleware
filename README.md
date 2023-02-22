@@ -5,7 +5,7 @@ This middleware implements the PSR-15 MiddlewareInterface and can be helpful to 
 ## Installation
 
 ```bash
-composer install dmt-software/anti-xss-middleware
+composer require dmt-software/anti-xss-middleware
 ```
 
 ## Usage
