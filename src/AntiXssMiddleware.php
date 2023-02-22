@@ -2,11 +2,12 @@
 
 namespace DMT\Http\AntiXss\Middleware;
 
-use HttpException\BadRequestException;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
 use voku\helper\AntiXSS;
 
 /**
@@ -14,12 +15,14 @@ use voku\helper\AntiXSS;
  */
 class AntiXssMiddleware implements MiddlewareInterface
 {
-    protected AntiXSS $antiXss;
+    protected ResponseFactoryInterface $responseFactory;
     protected array $methods;
+    private AntiXSS $antiXss;
 
-    public function __construct(AntiXSS $antiXSS = null, array $methods = ['get', 'post', 'put', 'patch'])
+    public function __construct(ResponseFactoryInterface $responseFactory, array $methods = ['get', 'post', 'put', 'patch'])
     {
-        $this->antiXss = $antiXSS ?? new AntiXSS();
+        $this->antiXss = new AntiXSS();
+        $this->responseFactory = $responseFactory;
         $this->methods = array_map('strtoupper', $methods);
     }
 
@@ -27,13 +30,16 @@ class AntiXssMiddleware implements MiddlewareInterface
      * @param ServerRequestInterface $request
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
-     * @throws BadRequestException
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (in_array(strtoupper($request->getMethod()), $this->methods)) {
-            $this->xssCheckQueryParams($request);
-            $this->xssCheckBody($request);
+        try {
+            if (in_array(strtoupper($request->getMethod()), $this->methods)) {
+                $this->xssCheckQueryParams($request);
+                $this->xssCheckBody($request);
+            }
+        } catch (RuntimeException $exception) {
+            return $this->responseFactory->createResponse(400, '400 Bad Request');
         }
 
         return $handler->handle($request);
@@ -42,7 +48,7 @@ class AntiXssMiddleware implements MiddlewareInterface
     /**
      * @param ServerRequestInterface $request
      * @return void
-     * @throws BadRequestException
+     * @throws RuntimeException
      */
     protected function xssCheckBody(ServerRequestInterface $request): void
     {
@@ -61,14 +67,14 @@ class AntiXssMiddleware implements MiddlewareInterface
         }
 
         if ($this->antiXss->isXssFound()) {
-            throw new BadRequestException();
+            throw new RuntimeException('Cross site scripting detected');
         }
     }
 
     /**
      * @param ServerRequestInterface $request
      * @return void
-     * @throws BadRequestException
+     * @throws RuntimeException
      */
     public function xssCheckQueryParams(ServerRequestInterface $request): void
     {
@@ -81,7 +87,7 @@ class AntiXssMiddleware implements MiddlewareInterface
         $this->antiXss->xss_clean($params);
 
         if ($this->antiXss->isXssFound()) {
-            throw new BadRequestException();
+            throw new RuntimeException('Cross site scripting detected');
         }
     }
 }
